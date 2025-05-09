@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>広告クリック後リンク表示</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    /* 広告エリア */
+    #adContainer {
+      display: inline-block;
+      border: 2px solid #ccc;
+      background-color: #fff;
+      padding: 10px;
+      cursor: pointer;
+    }
+    /* リンク表示エリア（初期は非表示） */
+    #linkContainer {
+      margin-top: 30px;
+      display: none;
+    }
+    #linkContainer a {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007BFF;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+    #linkContainer a:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>広告クリック後リンク表示</h1>
+  <p>下の広告をクリックし、広告ページで60秒以上経過してからこちらのページに戻るとリンクが表示されます。</p>
+
+  <!-- 広告エリア -->
+  <div id="adContainer">
+    <!-- admax -->
+    <script src="https://adm.shinobi.jp/s/3ddce2ca93c2e11e288cb4f0d0774815"></script>
+    <!-- admax -->
+  </div>
+
+  <!-- リンク表示エリア -->
+  <div id="linkContainer"></div>
+
+  <script>
+    // 必要な離脱時間（ミリ秒）：60秒
+    const REQUIRED_LEAVE_TIME = 60 * 1000;
+
+    // 飛べる先のサイトをBase64で隠す
+    // "https://yuni2023.github.io/site9/" を btoa() した結果
+    const encodedLink = "aHR0cHM6Ly95dW5pMjAyMy5naXRodWIuaW8vc2l0ZTk/";
+
+    let hiddenTime = null;
+
+    // タブの表示状態変化を監視
+    document.addEventListener("visibilitychange", () => {
+      if (document.hidden) {
+        hiddenTime = Date.now();
+      } else if (hiddenTime) {
+        const elapsed = Date.now() - hiddenTime;
+        hiddenTime = null;
+        if (elapsed >= REQUIRED_LEAVE_TIME) {
+          showLink();
+        } else {
+          alert("まだ60秒経過していません。広告ページで60秒以上ご覧になってから戻ってきてください。");
+        }
+      }
+    });
+
+    function showLink() {
+      const container = document.getElementById("linkContainer");
+      if (container.children.length) return;
+
+      const url = atob(encodedLink);
+      const a = document.createElement("a");
+      a.href = url;
+      a.target = "_blank";
+      a.textContent = "ダウンロードページへ移動する";
+      container.appendChild(a);
+      container.style.display = "block";
+    }
+  </script>
+</body>
+</html>
